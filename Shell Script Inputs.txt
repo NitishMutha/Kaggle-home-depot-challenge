@@ -1,0 +1,25 @@
+
+RankNet: Working
+
+./model_train_test.sh train RankNet 1 1 10
+
+
+RankBoost: Working
+
+./model_train_test.sh train RankBoost 300 -1
+
+AdaRank: Working
+
+./model_train_test.sh train AdaRank 500 0.002 5
+
+LambdaMART:
+
+./model_train_test.sh train LambdaMART 1000 10 0.1 -1 100
+
+MART: Working
+
+./model_train_test.sh train MART 100 10 0.1 -1 100
+
+ListNet: Working
+
+./model_train_test.sh train ListNet 10 0.01
