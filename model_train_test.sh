@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TRAIN_INPUT='Data/Input/dummy.txt'
+TRAIN_INPUT='Data/Input/ranklib_train_input.txt'
 TEST_INPUT='Data/Input/ranklib_test_input.txt'
 VAL_INPUT='Data/Input/ranklib_test_input.txt'
 MODEL_DIR='Data/Output/Models'

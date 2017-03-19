@@ -6,13 +6,13 @@ RankNet: Working
 
 RankBoost: Working
 
-./model_train_test.sh train RankBoost 300 -1
+./model_train_test.sh train RankBoost 300 25
 
 AdaRank: Working
 
 ./model_train_test.sh train AdaRank 500 0.002 5
 
-LambdaMART:
+LambdaMART: Not working
 
 ./model_train_test.sh train LambdaMART 1000 10 0.1 -1 100
 
