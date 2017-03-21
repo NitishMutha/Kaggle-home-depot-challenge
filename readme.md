@@ -4,8 +4,8 @@
 ---  
 
 ## Introduction  
-The Home Depot Kaggle Challenge is a task of ranking products sold by Home Depot in order of relevance to the user search queries. 
-The goal of is to develop a model which can accurately rank the products using Learning to Rank algorithms and provide critical
+The Home Depot Kaggle Challenge is a task of ranking products sold by Home Depot in order of relevance to the user search queries evaluated by RMSE.
+The goal of this project is to explore models which can accurately rank the products using Learning to Rank algorithms and provide critical
 analysis with optimization of models by tuning the hyper-parameters and feature engineering.  
 
 ## Project tasks breakdown 
