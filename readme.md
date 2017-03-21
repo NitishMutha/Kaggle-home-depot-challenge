@@ -1,4 +1,4 @@
-# IRDM Project 2017 Group 30, project at UCL  
+# IRDM Project 2017 - Group 30, at UCL  
 ## Option 3 - Home Depot Kaggle Challenge
 #### Nitish Mutha, Russel Daries, Alaister Moull, Rafel Faruq  
 ---  
