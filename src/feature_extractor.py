@@ -1,11 +1,45 @@
 import numpy as np
 import pandas as pd
-import matplotlib as plt
+import pickle
+#import matplotlib as plt
 from src.misc import *
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+'''
+RankLib requires its inputs in the following format:
+
+# query 1
+3 qid:1 1:1 2:1 3:0 4:0.2 5:0 # Comment
+2 qid:1 1:0 2:0 3:1 4:0.1 5:1 # Comment
+1 qid:1 1:0 2:1 3:0 4:0.4 5:0 # Comment
+1 qid:1 1:0 2:0 3:1 4:0.3 5:0 # Comment
+# query 2
+1 qid:2 1:0 2:0 3:1 4:0.2 5:0
+2 qid:2 1:1 2:0 3:1 4:0.4 5:0
+1 qid:2 1:0 2:0 3:1 4:0.1 5:0
+1 qid:2 1:0 2:0 3:1 4:0.2 5:0
+# query 3
+2 qid:3 1:0 2:0 3:1 4:0.1 5:1
+3 qid:3 1:1 2:1 3:0 4:0.3 5:0
+4 qid:3 1:1 2:0 3:0 4:0.4 5:1
+1 qid:3 1:0 2:1 3:1 4:0.5 5:0
+
+The first column is relevance label of this pair,
+the second column is query id,
+the following columns are ranks of the document in the input ranked lists,
+and the end of the row is comment about the pair
+
+<line> .=. <target> qid:<qid> <feature>:<value> <feature>:<value> ... <feature>:<value> # <info>
+<target> .=. <positive integer> .=. relevance x 100
+<qid> .=. <positive integer> .=. qid for search term
+<feature> .=. <positive integer> .=. 1 to n_features
+<value> .=. <float> .=. features/clipped features
+<info> .=. <string> .=. id: ground truth relevance:
+
+'''
+CLIP_AT = 6  #Number of decimal places to clip floats from input files when output to text for Ranklib
 
 def process_features():
     train_, test_, attributes, product_des, typos = load_data()
@@ -135,11 +169,11 @@ def process_features():
     alldata['qid'] = alldata.search_term.map(lambda x: int(np.argwhere(alldata.search_term.unique() == x).flatten()[0]))
 
     # save full features file
-    alldata.to_csv('features_alldata.csv', index=False)
+    alldata.to_csv('../data/features_alldata.csv', index=False)
 
     # drops unwanted columns
     cols_drop = [
-        # 'product_uid',
+        'product_uid',
         'search_term',
         'product_title',
         'product_description',
@@ -155,7 +189,96 @@ def process_features():
     ]
 
     final_features = alldata.drop(cols_drop, axis=1)
-    final_features.to_csv('vectorised_features_final.csv', index=False)
+    final_features.to_csv('../data/vectorised_features_final.csv', index=False)
+
+    gt_df = pd.read_csv('../data/solution.csv')
+    gt_df = gt_df.rename(index=str, columns={"relevance": "gt_relevance"})
+
+    final_features = final_features.merge(gt_df, how='left', on='id')
+    final_features.loc[74067:, 'relevance'] = final_features.loc[74067:, 'gt_relevance']
+    final_features.loc[:74066, 'Usage'] = 'Train'
+    final_features.loc[:74066, 'gt_relevance'] = final_features.loc[:74066, 'relevance']
+
+    '''
+    UNCOMMENT following lines to drop features for testing
+
+    drop_bullet = ['bullet_count', 'len_bullet', 'flag_st_in_bl',
+                   'num_st_in_bl', 'ratio_st_in_bl', 'cv_cos_sim_st_bl', 'tiv_cos_sim_st_bl']
+    drop_brand = ['len_brand', 'flag_st_in_br', 'num_st_in_br', 'ratio_st_in_br', 'brand_encoded']
+    drop_cos = ['cv_cos_sim_st_pt', 'cv_cos_sim_st_pd', 'cv_cos_sim_st_bl']
+    drop_tfidf = ['tiv_cos_sim_st_pt', 'tiv_cos_sim_st_pd', 'tiv_cos_sim_st_bl']
+    final_features = final_features.drop(drop_tfidf, axis=1)
+
+    '''
+
+    train_df = final_features[0:74066].copy()
+    train_df.sort_values('qid', inplace=True)
+    train_df = train_df.reset_index(drop=True)
+
+    test_df = export_df[74067:].copy()
+    test_df.sort_values('qid', inplace=True)
+    test_df = test_df.reset_index(drop=True)
+    val_df = test_df.copy()
+    test_df = test_df[test_df['Usage'] == 'Private']
+    test_df = test_df.reset_index(drop=True)
+
+    val_df = val_df[val_df['Usage'] == 'Public']
+    val_df = val_df.reset_index(drop=True)
+
+    header = final_features.columns.values.tolist()
+    to_ranklib = dict()
+    for i, col in enumerate(header):
+        to_ranklib[col] = i
+
+    n_features = len(to_ranklib) - 4  # 4 b/c [id,relevance,qid,gt_relevance]
+    from_ranklib = {v: k for k, v in to_ranklib.items()}
+
+    '''
+    UNCOMMENT following lines to save feature dict()
+
+    pickle.dump(to_ranklib, open("to_ranklib.pkl", "wb"))
+    pickle.dump(from_ranklib, open("from_ranklib.pkl", "wb"))
+    '''
+
+    def to_rl(row):
+        #Main worker function to convert input features to Ranklib input
+        csv_output = str(int((row[to_ranklib['relevance']] * 100))) + ' qid:' + str(int(row[to_ranklib['qid']])) + ' '
+        for i in range(n_features):
+            csv_output = csv_output + str(i + 1) + ':' + str(round(row[i + 2], CLIP_AT)) + ' '
+
+        csv_output = csv_output + '# id:' + str(int(row[to_ranklib['id']])) + ' gt:' + str(
+            (row[to_ranklib['gt_relevance']]))
+        return csv_output
+
+    ### TRAIN ###
+
+    n_rows = len(train_df.index)
+    columns = ['ranklib']
+    index = np.arange(n_rows)
+    df = pd.DataFrame(columns=columns, index=index)
+    df['ranklib'] = train_df.apply(lambda row: to_rl(row), axis=1)
+    df.to_csv('../data/input/ranklib_train_input.txt', index=False, header=False)
+    del df
+
+    ### TEST ###
+
+    n_rows = len(test_df.index)
+    columns = ['ranklib']
+    index = np.arange(n_rows)
+    df = pd.DataFrame(columns=columns, index=index)
+    df['ranklib'] = test_df.apply(lambda row: to_rl(row), axis=1)
+    df.to_csv('../data/input/ranklib_test_rl_input.txt', index=False, header=False)
+    del df
+
+    ### VAL ###
+
+    n_rows = len(val_df.index)
+    columns = ['ranklib']
+    index = np.arange(n_rows)
+    df = pd.DataFrame(columns=columns, index=index)
+    df['ranklib'] = val_df.apply(lambda row: to_rl(row), axis=1)
+    df.to_csv('../data/input/ranklib_valc_input.txt', index=False, header=False)
+    del df
 
 
 if __name__ == '__main__':
