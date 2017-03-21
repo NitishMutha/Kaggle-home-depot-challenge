@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import pickle
 #import matplotlib as plt
 from src.misc import *
 from sklearn.feature_extraction.text import CountVectorizer
@@ -40,6 +39,7 @@ and the end of the row is comment about the pair
 
 '''
 CLIP_AT = 6  #Number of decimal places to clip floats from input files when output to text for Ranklib
+OUTPUT_PICKLE =False
 
 def process_features():
     train_, test_, attributes, product_des, typos = load_data()
@@ -231,14 +231,12 @@ def process_features():
         to_ranklib[col] = i
 
     n_features = len(to_ranklib) - 4  # 4 b/c [id,relevance,qid,gt_relevance]
-    from_ranklib = {v: k for k, v in to_ranklib.items()}
+    if OUTPUT_PICKLE:
+        import pickle
+        from_ranklib = {v: k for k, v in to_ranklib.items()}
+        pickle.dump(to_ranklib, open("../data/to_ranklib.pkl", "wb"))
+        pickle.dump(from_ranklib, open("../data/from_ranklib.pkl", "wb"))
 
-    '''
-    UNCOMMENT following lines to save feature dict()
-
-    pickle.dump(to_ranklib, open("to_ranklib.pkl", "wb"))
-    pickle.dump(from_ranklib, open("from_ranklib.pkl", "wb"))
-    '''
 
     def to_rl(row):
         #Main worker function to convert input features to Ranklib input
