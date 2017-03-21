@@ -53,6 +53,7 @@ __Note: Due to github file upload restrictions, we cannot upload any file above 
 * nltk
 * matplotlib
 * seaborn
-  optionally
-* pickle
+* subprocess (optionally to run Ranklib from Python)
+* pickle (optionally)
+
 
