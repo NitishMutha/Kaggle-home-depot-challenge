@@ -34,8 +34,8 @@ Open terminal and execute
 **Output:**  
 `vectorised_features_final.csv`: Extracted features from the dataset. Can be used by RankLib as input   
 `features_alldata.csv`: Dump of all processed data from the feature_extractor. To be used for Tree based methods.  
-`feature_train.txt`: A ranklib format train feature file. To be used to run training on RankLib methods.  
-`feature_test.txt`: A ranklib format test feature file. To be used to run tests on RankLib methods.  
+`feature_train_ranklib.txt`: A ranklib format train feature file. To be used to run training on RankLib methods.  
+`feature_test_ranklib.txt`: A ranklib format test feature file. To be used to run tests on RankLib methods.  
 
 __Note: Due to github file upload restrictions, we cannot upload any file above 100Mb. Hence before executing the code please extract the compressed `productDescription.zip` and `attributes.zip` under `data` folder which are required by the `feature_extractor.py` to run without any errors.__
 
