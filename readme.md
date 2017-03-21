@@ -1,6 +1,6 @@
 # IRDM Project 2017 - Group 30, at UCL  
 ## Option 3 - Home Depot Kaggle Challenge
-#### Nitish Mutha, Russel Daries, Alaister Moull, Rafel Faruq  
+#### Nitish Mutha, Russel Daries, Alaister Moull, Rafiel Faruq  
 ---  
 
 ## Introduction  
@@ -35,8 +35,10 @@ Open terminal and execute
 **Output:**  
 `vectorised_features_final.csv`: Extracted features from the dataset. Can be used by RankLib as input   
 `features_alldata.csv`: Dump of all processed data from the feature_extractor. To be used for Tree based methods.  
-`feature_train_ranklib.txt`: A ranklib format train feature file. To be used to run training on RankLib methods.  
-`feature_test_ranklib.txt`: A ranklib format test feature file. To be used to run tests on RankLib methods.  
+`ranklib_train_input.txt`: A ranklib format train feature file. To be used to run training on RankLib methods.
+`ranklib_valc_input.txt`: A ranklib format test feature file (Public Test set from kaggle). Used for tests on RankLib methods.  
+`ranklib_test_input.txt`: A ranklib format test feature file (Private Test set from kaggle). Used for tests on RankLib methods.
+  optionally pickle files of the feature:feature_id may be saved as `to_ranklib.pkl` & `from_ranklib.pkl`
 
 __Note: Due to github file upload restrictions, we cannot upload any file above 100Mb. Hence before executing the code please extract the compressed `product_descriptions.zip` and `attributes.zip` under `data` folder which are required by the `feature_extractor.py` to run without any errors.__
 
@@ -51,3 +53,6 @@ __Note: Due to github file upload restrictions, we cannot upload any file above 
 * nltk
 * matplotlib
 * seaborn
+  optionally
+* pickle
+
