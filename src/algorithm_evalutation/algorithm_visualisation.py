@@ -8,23 +8,23 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
-IMAGE_DIR = '../../data/output/images/'
-filename = 'ranknet'
-datafile_1 = "rb_all_features"
-datafile_2 = 'test_results_2'
-datafile_3 = 'test_results_3'
-datafile_4 = 'test_results_4'
+IMAGE_DIR = '../../data/output/Images/'
+filename = 'listnet'
+datafile_1 = 'ln_brand_features'
+datafile_2 = 'ln_bullet_features'
+datafile_3 = 'ln_cos_features'
+datafile_4 = 'ln_all_features'
 
-x_data_label = "#iter   "
+x_data_label = '#epoch  '
 x_axis_label = 'Epochs'
 y_axis_label = 'NDCG@10'
 
 
 # Read in nesscary files
-train_data_1 = pd.read_excel('../../data/output/results/'+datafile_1+'.csv')
-train_data_2 = pd.read_excel('../../data/output/results/'+datafile_2+'.csv')
-train_data_3 = pd.read_excel('../../data/output/results/'+datafile_3+'.csv')
-train_data_4 = pd.read_excel('../../data/output/results/'+datafile_4+'.csv')
+train_data_1 = pd.read_excel('../../data/output/Results/'+datafile_1+'.csv')
+train_data_2 = pd.read_excel('../../data/output/Results/'+datafile_2+'.csv')
+train_data_3 = pd.read_excel('../../data/output/Results/'+datafile_3+'.csv')
+train_data_4 = pd.read_excel('../../data/output/Results/'+datafile_4+'.csv')
 
 print(train_data_1.keys())
 
@@ -32,22 +32,20 @@ print(train_data_1.keys())
 def plot_metrics(panda_dataframe_1,panda_dataframe_2,panda_dataframe_3,panda_dataframe_4,x_data_label,x_label,y_label,filename):
 
     plt.figure()
-    plt.plot(panda_dataframe_1[x_data_label],panda_dataframe_1[" NDCG@10-T "], label='Train-1', linewidth=2.0)
-    plt.plot(panda_dataframe_1[x_data_label],panda_dataframe_1[" NDCG@10-V "], label='Valid-1', linewidth=2.0)
+    plt.plot(panda_dataframe_1[x_data_label],panda_dataframe_1[' NDCG@10-T '], label='Train-1', linewidth=2.0)
+    plt.plot(panda_dataframe_2[x_data_label],panda_dataframe_2[' NDCG@10-T '], label='Train-2', linewidth=2.0)
+    plt.plot(panda_dataframe_3[x_data_label],panda_dataframe_3[' NDCG@10-T '], label='Train-3', linewidth=2.0)
+    plt.plot(panda_dataframe_4[x_data_label],panda_dataframe_4[' NDCG@10-T '], label='Train-F', linewidth=2.0)
 
-    plt.plot(panda_dataframe_2[x_data_label],panda_dataframe_2[" NDCG@10-T "], label='Train-2', linewidth=2.0)
-    plt.plot(panda_dataframe_2[x_data_label],panda_dataframe_2[" NDCG@10-V "], label='Valid-2', linewidth=2.0)
-
-    plt.plot(panda_dataframe_3[x_data_label],panda_dataframe_3[" NDCG@10-T "], label='Train-3', linewidth=2.0)
-    plt.plot(panda_dataframe_2[x_data_label],panda_dataframe_2[" NDCG@10-V "], label='Valid-3', linewidth=2.0)
+    plt.plot(panda_dataframe_1[x_data_label],panda_dataframe_1[' NDCG@10-V '], label='Valid-1', linewidth=2.0)
+    plt.plot(panda_dataframe_2[x_data_label],panda_dataframe_2[' NDCG@10-V '], label='Valid-2', linewidth=2.0)
+    plt.plot(panda_dataframe_3[x_data_label],panda_dataframe_3[' NDCG@10-V '], label='Valid-3', linewidth=2.0)
+    plt.plot(panda_dataframe_4[x_data_label],panda_dataframe_4[' NDCG@10-V '], label='Valid-F', linewidth=2.0)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
     plt.xlabel(x_label,fontsize = 18)
     plt.ylabel(y_label,fontsize = 18)
-
-    plt.plot(panda_dataframe_4[x_data_label],panda_dataframe_4[" NDCG@10-T "], label = 'Train-F', linewidth=2.0)
-    plt.plot(panda_dataframe_4[x_data_label],panda_dataframe_4[" NDCG@10-V "], label='Valid-F', linewidth=2.0)
 
     plt.legend()
     plt.grid(True)
