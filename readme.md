@@ -1,6 +1,6 @@
 ---
 # Information Retrieval and Data Mining Project 2017
-### Group 30, at UCL (University College London) 
+#### Group 30, at UCL (University College London) 
 ## Title - Home Depot Kaggle Challenge
 #### Team: Nitish Mutha | Russel Daries | Alaister Moull | Rafiel Faruq  
 ---  
